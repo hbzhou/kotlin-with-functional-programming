@@ -27,7 +27,7 @@ sealed class List<out A> {
             is Nil -> throw IllegalStateException("Cannot drop more elements than in list")
         }
 
-    tailrec fun <A> dropWhile(l: List<A>, f: (A) -> Boolean): List<A> = when (l) {
+    private tailrec fun <A> dropWhile(l: List<A>, f: (A) -> Boolean): List<A> = when (l) {
         is Nil -> l
         is Cons -> if (f(l.head)) dropWhile(l.tail, f) else l
     }
