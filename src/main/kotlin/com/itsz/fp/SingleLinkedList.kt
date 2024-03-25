@@ -79,13 +79,16 @@ sealed class List<out A> {
 
         fun increment(list: List<Int>) = foldRight(list, empty<Int>()) { i, newList -> Cons(i + 1, newList) }
 
-        fun doubleToString(doubles: List<Double>) = foldRight(doubles, empty()) { d: Double, strList: List<String> -> Cons(d.toString(), strList) }
+        fun doubleToString(doubles: List<Double>) =
+            foldRight(doubles, empty()) { d: Double, strList: List<String> -> Cons(d.toString(), strList) }
 
         fun <A, B> map(xs: List<A>, f: (A) -> B): List<B> = foldRight(xs, empty()) { a, list -> Cons(f(a), list) }
 
-        fun <A, B> flatMap(xa: List<A>, f: (A) -> List<B>): List<B> = foldRight(xa, empty()) { a, list ->  append1(f(a), list)}
+        fun <A, B> flatMap(xa: List<A>, f: (A) -> List<B>): List<B> =
+            foldRight(xa, empty()) { a, list -> append1(f(a), list) }
 
-        fun <A> filter(xs: List<A>, f: (A) -> Boolean): List<A> = foldRight(xs, empty()){ a, list -> if (f(a)) Cons(a, list) else list }
+        fun <A> filter(xs: List<A>, f: (A) -> Boolean): List<A> =
+            foldRight(xs, empty()) { a, list -> if (f(a)) Cons(a, list) else list }
 
         fun <A> zipWith(xa: List<A>, xb: List<A>, f: (A, A) -> A): List<A> =
             when (xa) {
@@ -97,6 +100,25 @@ sealed class List<out A> {
                         zipWith(xa.tail, xb.tail, f)
                     )
                 }
+            }
+
+       private tailrec fun <A> startsWith(l1: List<A>, l2: List<A>): Boolean =
+            when (l1) {
+                is Nil -> l2 == Nil
+                is Cons -> when (l2) {
+                    is Nil -> true
+                    is Cons ->
+                        if (l1.head == l2.head) startsWith(l1.tail, l2.tail)
+                        else false
+                }
+            }
+
+        tailrec fun <A> hasSubsequence(xs: List<A>, sub: List<A>): Boolean =
+            when (xs) {
+                is Nil -> false
+                is Cons ->
+                    if (startsWith(xs, sub)) true
+                    else hasSubsequence(xs.tail, sub)
             }
 
     }
@@ -112,7 +134,8 @@ data class Cons<out A>(val head: A, val tail: List<A>) : List<A>()
 fun main() {
     val nil = Nil
     val list = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
-    val list1 = Cons(5, Cons(6, Cons(7,  Cons(8, Nil))))
+    val list1 = Cons(5, Cons(6, Cons(7, Cons(8, Nil))))
+    val list2 = Cons(1, Cons(2, Nil))
     println(List.length(nil))
     println(List.length(list))
     println(List.length(nil))
@@ -123,4 +146,6 @@ fun main() {
     println(List.increment(list))
     println(List.filter(list) { x -> x > 2 })
     println(List.zipWith(list, list1) { a, b -> a + b })
+    println(List.hasSubsequence(list, list2))
+    
 }
