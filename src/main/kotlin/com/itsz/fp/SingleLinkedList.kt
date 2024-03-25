@@ -23,6 +23,9 @@ sealed class List<out A> {
             is Cons -> xs.tail
         }
 
+        fun <A> empty(): List<A> = Nil
+
+
         fun <A> setHead(xs: List<A>, x: A): List<A> = when (xs) {
             is Nil -> throw IllegalStateException("don't have head")
             is Cons -> Cons(x, xs.tail)
@@ -65,6 +68,37 @@ sealed class List<out A> {
         fun sum1(xs: List<Int>): Int = foldLeft(xs, 0) { a, b -> a + b }
 
         fun multi(xs: List<Int>): Int = foldLeft(xs, 1) { a, b -> a * b }
+
+        fun reverse(xs: List<Int>): List<Int> = foldLeft(xs, empty()) { list, i ->
+            Cons(i, list)
+        }
+
+        fun <A> append1(list1: List<A>, list2: List<A>) = foldRight(list1, list2) { i, list -> Cons(i, list) }
+
+        fun <A> append2(list1: List<A>, list2: List<A>) = foldLeft(list2, list1) { list, a -> Cons(a, list) }
+
+        fun increment(list: List<Int>) = foldRight(list, empty<Int>()) { i, newList -> Cons(i + 1, newList) }
+
+        fun doubleToString(doubles: List<Double>) = foldRight(doubles, empty()) { d: Double, strList: List<String> -> Cons(d.toString(), strList) }
+
+        fun <A, B> map(xs: List<A>, f: (A) -> B): List<B> = foldRight(xs, empty()) { a, list -> Cons(f(a), list) }
+
+        fun <A, B> flatMap(xa: List<A>, f: (A) -> List<B>): List<B> = foldRight(xa, empty()) { a, list ->  append1(f(a), list)}
+
+        fun <A> filter(xs: List<A>, f: (A) -> Boolean): List<A> = foldRight(xs, empty()){ a, list -> if (f(a)) Cons(a, list) else list }
+
+        fun <A> zipWith(xa: List<A>, xb: List<A>, f: (A, A) -> A): List<A> =
+            when (xa) {
+                is Nil -> Nil
+                is Cons -> when (xb) {
+                    is Nil -> Nil
+                    is Cons -> Cons(
+                        f(xa.head, xb.head),
+                        zipWith(xa.tail, xb.tail, f)
+                    )
+                }
+            }
+
     }
 
 }
@@ -78,11 +112,15 @@ data class Cons<out A>(val head: A, val tail: List<A>) : List<A>()
 fun main() {
     val nil = Nil
     val list = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
+    val list1 = Cons(5, Cons(6, Cons(7,  Cons(8, Nil))))
     println(List.length(nil))
     println(List.length(list))
     println(List.length(nil))
     println(List.length1(list))
     println(List.sum1(list))
     println(List.multi(list))
-
+    println(List.reverse(list))
+    println(List.increment(list))
+    println(List.filter(list) { x -> x > 2 })
+    println(List.zipWith(list, list1) { a, b -> a + b })
 }
