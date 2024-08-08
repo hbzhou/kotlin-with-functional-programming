@@ -64,11 +64,7 @@ fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> = when(this){
     is StreamCons -> if (p(this.header())) this.tail().takeWhile(p) else this
 }
 
-fun <A> Stream<A>.takeWhile2(p: (A) -> Boolean): Stream<A> = foldRight(
-    { empty() },
-    { head, tail -> if (p(head)) StreamCons({head}, tail) else tail()}
-)
-
+fun <A> Stream<A>.takeWhile2(p: (A) -> Boolean): Stream<A> = foldRight({ empty() }, { head, tail -> if (p(head)) StreamCons({head}, tail) else tail()})
 
 fun <A> Stream<A>.exists(p: (A) -> Boolean): Boolean = when(this){
     is Empty -> false
@@ -88,9 +84,7 @@ fun <A> Stream<A>.append(sa: () -> Stream<A>): Stream<A> = foldRight(sa) { h, t 
 fun <A, B> Stream<A>.flatMap(f: (A) -> Stream<B>): Stream<B> = foldRight({ empty() }, { h, t -> f(h).append(t) })
 
 fun <A, B> Stream<A>.foldRight(z: () -> B, f: (A, () -> B) -> B): B = when (this) {
-    is StreamCons<A> -> f(header()) {
-        tail().foldRight(z, f)
-    }
+    is StreamCons<A> -> f(header()) { tail().foldRight(z, f) }
     is Empty -> z()
 }
 

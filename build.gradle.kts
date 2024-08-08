@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.9.21"
     application
+    kotlin("plugin.allopen") version "1.9.21"
+    kotlin("plugin.noarg") version "1.9.21"
+
 }
 
 group = "com.itsz"
@@ -14,10 +17,23 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation(kotlin("stdlib-jdk8"))
+    implementation("com.fasterxml.jackson.core:jackson-core:2.17.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
+
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+kotlin{
+    jvmToolchain{
+        java {
+            version = JavaVersion.VERSION_17
+        }
+    }
 }
 
 tasks.withType<KotlinCompile> {
