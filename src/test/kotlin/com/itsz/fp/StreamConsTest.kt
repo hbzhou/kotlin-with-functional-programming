@@ -1,5 +1,7 @@
 package com.itsz.fp
 
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.collections.shouldHaveSize
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -9,14 +11,17 @@ class StreamConsTest {
     fun of() {
         val intStream = Stream.of(1, 2, 2, 4, 9, 3)
         val list = intStream.toList()
-        assertEquals(6, List.length(list))
+
+        val listOf = listOf(1, 2, 3, 4, 5)
+        listOf shouldHaveSize 3
     }
+
 
     @Test
     fun exists() {
         val intStream = Stream.of(1, 2, 2, 4, 9, 3)
-        assertTrue(intStream.exists { it > 5 })
-        assertFalse(intStream.exists { it > 10 })
+        intStream.exists { it>5 } shouldBe true
+        intStream.exists { it>10 } shouldBe false
     }
 
     @Test

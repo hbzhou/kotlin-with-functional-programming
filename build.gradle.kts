@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.9.1")
     implementation(kotlin("stdlib-jdk8"))
     implementation("com.fasterxml.jackson.core:jackson-core:2.17.2")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
