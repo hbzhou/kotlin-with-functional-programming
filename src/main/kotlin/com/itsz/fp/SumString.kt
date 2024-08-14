@@ -1,5 +1,6 @@
 package com.itsz.fp
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
@@ -60,6 +61,9 @@ class Util(val objectMapper: ObjectMapper) {
     }
 }
 
+inline fun <reified T: Any> Util.fromJson(json: String): T = objectMapper.readValue(json)
+
+
 data class Car(var color: String? = null, var type: String? = null)
 
 fun main() {
@@ -80,6 +84,9 @@ fun main() {
 
     val car = Util(ObjectMapper()).testGeneric<Car>(json)
     println(car)
+
+    val car2 = Util(ObjectMapper()).fromJson<Car>(json)
+    println(car2)
 
     TomAraya("Thrash Metal").makeSound()
     ElvisPresley("Dancin' to the Jailhouse Rock.").makeSound()
